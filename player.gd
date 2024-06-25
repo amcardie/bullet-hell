@@ -1,9 +1,9 @@
 extends CharacterBody2D
 
-@export var speed = 250
-@export var jumpForce = 450  # Increase jump force for stronger initial jump
-@export var gravity = 981     # Default gravity for falling
-@export var fallGravity = 2100  # Higher gravity for falling faster
+@export var speed = 400
+@export var jumpForce = 450
+@export var gravity = 981
+@export var fallGravity = 2100
 
 @export var jumpBuffer = 0.1
 @export var coyoteTime = 0.1
@@ -30,13 +30,17 @@ func _physics_process(delta):
 	
 	if not is_on_floor():
 		if velocity.y < 0:
-			velocity.y += gravity * delta  # Use normal gravity when going up
+			velocity.y += gravity * delta
 		else:
-			velocity.y += fallGravity * delta  # Use higher gravity when falling
+			velocity.y += fallGravity * delta
 		
 		if Input.is_action_pressed("down"):
-			velocity.y += (fallGravity * delta)  # Increase fall speed when pressing down
-		
+			velocity.y += (fallGravity * delta)
+			
+		if Input.is_action_just_released("jump"):
+			if velocity.y < 0.0:
+				velocity.y *= 0.5
+					
 		coyoteTimer -= delta
 	else:
 		coyoteTimer = coyoteTime
@@ -45,7 +49,7 @@ func _physics_process(delta):
 		bufferTimer -= delta
 	
 	if Input.is_action_just_pressed("jump") and (is_on_floor() or coyoteTimer > 0):
-		velocity.y = -jumpForce  # Set initial jump velocity
+		velocity.y = -jumpForce
 		
 		coyoteTimer = 0.0
 		bufferTimer = 0.0
